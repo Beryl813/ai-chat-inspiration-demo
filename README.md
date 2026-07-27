@@ -2,8 +2,9 @@
 
 这是一个纯静态 demo，可以直接打开预览，也可以上传到 GitHub Pages。
 
-- 英文聊天场景：`index.html`
-- 中文聊天场景：`index-zh.html`
+- 中文聊天场景：`index.html`，GitHub Pages 根链接默认打开这一版
+- 英文聊天场景：`index-en.html`
+- 中文备用入口：`index-zh.html`
 
 ## 本地预览
 
@@ -11,6 +12,7 @@
 
 ```text
 index.html
+index-en.html
 index-zh.html
 ```
 
@@ -19,10 +21,10 @@ index-zh.html
 1. 新建一个 public repository。
 2. 上传本文件夹内的全部文件：
    - `index.html`
+   - `index-en.html`
    - `index-zh.html`
    - `README.md`
    - `.nojekyll`
-   - `PRD.md`
 3. 进入 repository 的 `Settings`。
 4. 打开 `Pages`。
 5. Source 选择 `Deploy from a branch`。
