@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HelloTalk AI助聊优化 Demo - 中文版</title>
+  <style>
+    :root {
+      --page: #f4f4f6;
+      --surface: #fff;
+      --subtle: #f7f7f8;
+      --line: #ececef;
+      --text: #171717;
+      --secondary: #6f737a;
+      --tertiary: #a5a8ae;
+      --purple: #7047f5;
+      --purple-soft: #f5f2ff;
+      --cyan: #47c7c8;
+      --blue: #25a7f2;
+      --green: #28c76f;
+      --keyboard: #d1d6de;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--page);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+    }
+
+    button,
+    textarea {
+      font: inherit;
+    }
+
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .14);
+    }
+
+    .status {
+      height: 44px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 17px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--surface);
+    }
+
+    .status-icons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .signal {
+      width: 17px;
+      height: 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 3px);
+      gap: 1px;
+      align-items: end;
+    }
+
+    .signal i {
+      display: block;
+      width: 3px;
+      border-radius: 1px;
+      background: var(--text);
+    }
+
+    .signal i:nth-child(1) { height: 3px; }
+    .signal i:nth-child(2) { height: 5px; }
+    .signal i:nth-child(3) { height: 7px; }
+    .signal i:nth-child(4) { height: 9px; }
+
+    .battery {
+      width: 24px;
+      height: 11px;
+      border: 1.5px solid var(--text);
+      border-radius: 3px;
+      position: relative;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 3px;
+      width: 2px;
+      height: 4px;
+      border-radius: 1px;
+      background: var(--text);
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      width: 15px;
+      height: 5px;
+      border-radius: 2px;
+      background: var(--text);
+    }
+
+    .nav {
+      height: 52px;
+      display: grid;
+      grid-template-columns: 42px 1fr 86px;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+      padding: 0 10px;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      background: transparent;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      padding: 0;
+    }
+
+    .icon-btn:active {
+      background: var(--subtle);
+      transform: scale(.97);
+    }
+
+    .chevron {
+      width: 11px;
+      height: 11px;
+      border-left: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      margin-left: 4px;
+    }
+
+    .nav-title {
+      min-width: 0;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .name-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .vip {
+      font-size: 9px;
+      line-height: 12px;
+      color: #8a5a00;
+      background: #ffe7a6;
+      border-radius: 6px;
+      padding: 0 4px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: var(--tertiary);
+      margin-top: 2px;
+    }
+
+    .nav-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .magnifier,
+    .phone-icon,
+    .more-dot,
+    .plus-icon,
+    .mic-icon,
+    .image-icon,
+    .emoji-icon,
+    .gift-icon,
+    .translate-icon,
+    .chat-ai-icon,
+    .spark-icon,
+    .refresh-icon {
+      display: block;
+      position: relative;
+    }
+
+    .magnifier {
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .magnifier::after {
+      content: "";
+      width: 7px;
+      height: 2px;
+      background: currentColor;
+      position: absolute;
+      right: -6px;
+      bottom: -3px;
+      border-radius: 1px;
+      transform: rotate(45deg);
+    }
+
+    .phone-icon {
+      width: 17px;
+      height: 18px;
+      border: 2px solid currentColor;
+      border-radius: 4px;
+      transform: rotate(-18deg);
+    }
+
+    .more-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 8px 0 0 currentColor, 16px 0 0 currentColor;
+      margin-left: -16px;
+    }
+
+    .messages {
+      position: absolute;
+      inset: 96px 0 145px;
+      padding: 14px 14px 8px;
+      overflow: hidden;
+      background: #fbfbfc;
+      transition: bottom .22s ease;
+    }
+
+    .phone.panel-open .messages {
+      bottom: 430px;
+    }
+
+    .day {
+      width: fit-content;
+      margin: 4px auto 14px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      background: #eef0f4;
+      color: var(--tertiary);
+      font-size: 10px;
+    }
+
+    .bubble-row {
+      display: flex;
+      margin-bottom: 12px;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .bubble-row.me {
+      justify-content: flex-end;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8bdcff, #7047f5);
+      flex: 0 0 auto;
+    }
+
+    .bubble {
+      max-width: 246px;
+      padding: 9px 11px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 20px;
+      background: var(--surface);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, .04);
+    }
+
+    .me .bubble {
+      background: var(--cyan);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .them .bubble {
+      border-bottom-left-radius: 4px;
+    }
+
+    .composer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--line);
+      transition: transform .22s ease;
+      z-index: 3;
+    }
+
+    .phone.panel-open .composer {
+      transform: translateY(-285px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .inspiration-strip {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 8px 13px 4px;
+      position: relative;
+    }
+
+    .inspiration-pill {
+      border: 0;
+      background: var(--purple-soft);
+      color: var(--purple);
+      height: 38px;
+      border-radius: 20px;
+      padding: 0 5px 0 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0;
+      box-shadow: 0 1px 2px rgba(112, 71, 245, .06);
+    }
+
+    button:focus {
+      outline: none;
+    }
+
+    button:focus-visible {
+      box-shadow: 0 0 0 2px rgba(112, 71, 245, .18);
+    }
+
+    .inspiration-pill:active,
+    .more-link:active,
+    .send:active,
+    .suggest-action:active,
+    .tab:active {
+      transform: scale(.98);
+    }
+
+    .pill-ai {
+      width: 29px;
+      height: 29px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #8a62ff, #7047f5);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .more-link {
+      border: 0;
+      background: transparent;
+      color: var(--purple);
+      height: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 0;
+      display: none;
+      white-space: nowrap;
+      position: absolute;
+      left: 18px;
+      top: 12px;
+    }
+
+    .has-idea .more-link {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .input-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px 8px;
+    }
+
+    .plus-icon {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--text);
+      border-radius: 50%;
+    }
+
+    .plus-icon::before,
+    .plus-icon::after {
+      content: "";
+      position: absolute;
+      background: var(--text);
+      border-radius: 1px;
+      left: 5px;
+      right: 5px;
+      top: 10px;
+      height: 2px;
+    }
+
+    .plus-icon::after {
+      top: 5px;
+      bottom: 5px;
+      left: 10px;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+
+    .input-wrap {
+      flex: 1;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      border-radius: 19px;
+      background: var(--subtle);
+      padding: 0 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 24px;
+      max-height: 64px;
+      resize: none;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      padding: 8px 0 6px;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    textarea::placeholder {
+      color: var(--tertiary);
+    }
+
+    .send {
+      min-width: 47px;
+      height: 32px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 16px;
+      background: var(--purple);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: .35;
+      pointer-events: none;
+    }
+
+    .can-send .send {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .tool-row {
+      height: 54px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      align-items: center;
+      padding: 0 7px 8px;
+    }
+
+    .tool {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      background: transparent;
+      color: #303238;
+      border-radius: 21px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto;
+    }
+
+    .mic-icon {
+      width: 14px;
+      height: 20px;
+      border: 2px solid currentColor;
+      border-radius: 8px;
+    }
+
+    .mic-icon::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 10px;
+      border-bottom: 2px solid currentColor;
+      border-left: 2px solid currentColor;
+      border-right: 2px solid currentColor;
+      border-radius: 0 0 10px 10px;
+      left: -4px;
+      top: 8px;
+    }
+
+    .image-icon {
+      width: 23px;
+      height: 18px;
+      border: 2px solid currentColor;
+      border-radius: 4px;
+    }
+
+    .image-icon::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 4px;
+      height: 4px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+
+    .image-icon::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      bottom: 2px;
+      width: 12px;
+      height: 8px;
+      background: currentColor;
+      clip-path: polygon(0 100%, 40% 30%, 62% 58%, 78% 38%, 100% 100%);
+    }
+
+    .emoji-icon {
+      width: 22px;
+      height: 22px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .emoji-icon::before {
+      content: "";
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: currentColor;
+      border-radius: 50%;
+      top: 6px;
+      left: 5px;
+      box-shadow: 7px 0 0 currentColor;
+    }
+
+    .emoji-icon::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 12px;
+      width: 9px;
+      height: 4px;
+      border-bottom: 2px solid currentColor;
+      border-radius: 0 0 9px 9px;
+    }
+
+    .gift-icon {
+      width: 24px;
+      height: 22px;
+      border: 2px solid currentColor;
+      border-radius: 4px;
+      margin-top: 3px;
+    }
+
+    .gift-icon::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: -5px;
+      width: 4px;
+      height: 27px;
+      background: currentColor;
+      border-radius: 1px;
+    }
+
+    .gift-icon::after {
+      content: "";
+      position: absolute;
+      left: -3px;
+      top: 6px;
+      width: 30px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 1px;
+    }
+
+    .translate-icon {
+      width: 28px;
+      height: 28px;
+      color: currentColor;
+    }
+
+    .translate-icon::before {
+      content: "文";
+      position: absolute;
+      left: 0;
+      top: -1px;
+      font-size: 24px;
+      line-height: 28px;
+      font-weight: 700;
+    }
+
+    .translate-icon::after {
+      content: "A";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      font-size: 14px;
+      line-height: 16px;
+      font-weight: 700;
+    }
+
+    .chat-ai-icon {
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      background: var(--purple);
+      color: #fff;
+      display: block;
+    }
+
+    .chat-ai-icon::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 9px;
+      width: 13px;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+      box-shadow: 0 5px 0 currentColor;
+    }
+
+    .chat-ai-icon::after {
+      content: "";
+      position: absolute;
+      right: 5px;
+      bottom: 2px;
+      width: 8px;
+      height: 8px;
+      background: var(--purple);
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    .tool-label {
+      font-size: 18px;
+      line-height: 1;
+      color: var(--secondary);
+    }
+
+    .ai-panel {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 285px;
+      background: var(--subtle);
+      transform: translateY(100%);
+      transition: transform .22s ease;
+      z-index: 2;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, .08);
+    }
+
+    .phone.panel-open .ai-panel {
+      transform: translateY(0);
+    }
+
+    .tabs {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      padding: 0 18px;
+      gap: 4px;
+      background: var(--surface);
+    }
+
+    .tab {
+      height: 36px;
+      flex: 1;
+      border: 0;
+      background: transparent;
+      color: var(--secondary);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 18px;
+      position: relative;
+    }
+
+    .tab.active {
+      color: var(--text);
+      background: var(--purple-soft);
+    }
+
+    .panel-head {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px 0;
+      position: relative;
+    }
+
+    .panel-head::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 6px;
+      width: 42px;
+      height: 4px;
+      border-radius: 2px;
+      background: #d9d9de;
+      transform: translateX(-50%);
+    }
+
+    .remaining {
+      min-width: 126px;
+      height: 34px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 14px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .remaining::before {
+      content: "✦";
+      color: var(--purple);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .remaining b {
+      color: var(--purple);
+      font-weight: 800;
+    }
+
+    .refresh {
+      border: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: 17px;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      color: var(--purple);
+    }
+
+    .refresh-icon {
+      width: 17px;
+      height: 17px;
+      border: 2px solid currentColor;
+      border-left-color: transparent;
+      border-radius: 50%;
+    }
+
+    .refresh-icon::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -3px;
+      width: 6px;
+      height: 6px;
+      border-top: 2px solid currentColor;
+      border-right: 2px solid currentColor;
+      transform: rotate(20deg);
+    }
+
+    .suggestions {
+      padding: 4px 28px 12px;
+    }
+
+    .suggestion {
+      height: 44px;
+      border-top: 0;
+      border-radius: 22px;
+      background: var(--surface);
+      display: grid;
+      grid-template-columns: 1fr 38px;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 4px 7px 16px;
+      margin-bottom: 10px;
+    }
+
+    .suggestion-text {
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .suggest-action {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 17px;
+      background: transparent;
+      color: var(--purple);
+      display: grid;
+      place-items: center;
+    }
+
+    .arrow {
+      width: 0;
+      height: 0;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      border-left: 16px solid currentColor;
+      transform: none;
+      margin-left: 1px;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 402px;
+      transform: translateX(-50%) translateY(12px);
+      width: max-content;
+      max-width: 310px;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(23, 23, 23, .86);
+      color: #fff;
+      border-radius: 17px;
+      padding: 8px 13px;
+      font-size: 12px;
+      z-index: 10;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .sent-flash {
+      position: absolute;
+      right: 14px;
+      bottom: 158px;
+      background: rgba(112, 71, 245, .94);
+      color: #fff;
+      padding: 7px 11px;
+      border-radius: 16px;
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 8;
+    }
+
+    .sent-flash.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 420px) {
+      body {
+        place-items: start center;
+        background: var(--surface);
+      }
+
+      .phone {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" id="phone">
+    <div class="status" aria-hidden="true">
+      <span>9:41</span>
+      <div class="status-icons">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <span class="battery"></span>
+      </div>
+    </div>
+
+    <header class="nav">
+      <button class="icon-btn" aria-label="返回"><span class="chevron"></span></button>
+      <div class="nav-title">
+        <div class="name-row">Ahr <span class="vip">VIP</span></div>
+        <div class="subtitle">在线 · 想练中文口语</div>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="搜索"><span class="magnifier"></span></button>
+        <button class="icon-btn" aria-label="通话"><span class="phone-icon"></span></button>
+        <button class="icon-btn" aria-label="更多"><span class="more-dot"></span></button>
+      </div>
+    </header>
+
+    <section class="messages" id="messages" aria-label="聊天内容">
+      <div class="day">今天 21:08</div>
+      <div class="bubble-row them">
+        <div class="avatar" aria-hidden="true"></div>
+        <div class="bubble">我这周准备去上海旅行，想练一下中文点餐。</div>
+      </div>
+      <div class="bubble-row me">
+        <div class="bubble">听起来不错，你最想练哪种场景？</div>
+      </div>
+      <div class="bubble-row them">
+        <div class="avatar" aria-hidden="true"></div>
+        <div class="bubble">我想练在咖啡店和餐厅怎么说得更自然。</div>
+      </div>
+    </section>
+
+    <section class="composer" id="composer" aria-label="输入区">
+      <div class="inspiration-strip" id="inspirationStrip">
+        <button class="more-link" id="openMore" type="button">查看更多</button>
+        <button class="inspiration-pill" id="quickIdea" type="button">
+          <span>点我获取聊天灵感</span>
+          <span class="pill-ai" aria-hidden="true">AI</span>
+        </button>
+      </div>
+
+      <div class="input-line" id="inputLine">
+        <div class="input-wrap">
+          <textarea id="messageInput" rows="1" placeholder="请输入..."></textarea>
+        </div>
+        <button class="send" id="sendBtn" type="button">发送</button>
+      </div>
+
+      <div class="tool-row" aria-label="快捷工具">
+        <button class="tool" type="button" aria-label="更多工具"><span class="plus-icon"></span></button>
+        <button class="tool" type="button" aria-label="相册"><span class="image-icon"></span></button>
+        <button class="tool" type="button" aria-label="表情"><span class="emoji-icon"></span></button>
+        <button class="tool" type="button" aria-label="礼物"><span class="gift-icon"></span></button>
+        <button class="tool" type="button" aria-label="翻译"><span class="translate-icon"></span></button>
+        <button class="tool" type="button" aria-label="AI助聊"><span class="chat-ai-icon"></span></button>
+      </div>
+    </section>
+
+    <section class="ai-panel" id="aiPanel" aria-label="底部工具区">
+      <div class="tabs" role="tablist">
+        <button class="tab active" type="button">AI助聊</button>
+        <button class="tab" type="button">常用语</button>
+        <button class="tab" type="button">聊天话题</button>
+      </div>
+      <div class="panel-head">
+        <div class="remaining">剩余<b id="remainCount">10</b>次 <b>+</b></div>
+        <button class="refresh" id="refreshBtn" type="button" aria-label="换一换"><span class="refresh-icon"></span></button>
+      </div>
+      <div class="suggestions" id="suggestions"></div>
+    </section>
+
+    <div class="toast" id="toast" role="status">暂时没想到合适的，可以稍后再试</div>
+    <div class="sent-flash" id="sentFlash">已按普通文本发送</div>
+  </main>
+
+  <script>
+    const phone = document.getElementById("phone");
+    const strip = document.getElementById("inspirationStrip");
+    const quickIdea = document.getElementById("quickIdea");
+    const openMore = document.getElementById("openMore");
+    const input = document.getElementById("messageInput");
+    const inputLine = document.getElementById("inputLine");
+    const sendBtn = document.getElementById("sendBtn");
+    const suggestionsEl = document.getElementById("suggestions");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const remainCount = document.getElementById("remainCount");
+    const toast = document.getElementById("toast");
+    const sentFlash = document.getElementById("sentFlash");
+    const messages = document.getElementById("messages");
+
+    const suggestionSets = [
+      [
+        "你想先练点咖啡，还是练点一份晚餐？",
+        "上海有什么你最想去的小店吗？",
+        "要不要我们用中文练几句点餐对话？"
+      ],
+      [
+        "你可以先写一句点餐的话，我帮你看看自然不自然。",
+        "如果服务员问你要什么饮料，你想怎么回答？",
+        "我们可以轮流练中文和英文，各改一句。"
+      ],
+      [
+        "你觉得中文点餐最难的是量词还是语气？",
+        "你喜欢安静的咖啡店，还是热闹一点的餐厅？",
+        "我可以陪你练中文，你也帮我练英文。"
+      ]
+    ];
+
+    let setIndex = 0;
+    let remaining = 10;
+
+    function autosize() {
+      input.style.height = "0px";
+      input.style.height = Math.min(input.scrollHeight, 64) + "px";
+      inputLine.classList.toggle("can-send", input.value.trim().length > 0);
+    }
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+
+    function renderSuggestions() {
+      const items = suggestionSets[setIndex];
+      suggestionsEl.innerHTML = items.map((text, index) => `
+        <div class="suggestion">
+          <div class="suggestion-text">${text}</div>
+          <button class="suggest-action" type="button" aria-label="使用第${index + 1}条建议" data-index="${index}">
+            <span class="arrow"></span>
+          </button>
+        </div>
+      `).join("");
+    }
+
+    function smartFill(text) {
+      const current = input.value.trim();
+      if (!current) {
+        input.value = text;
+      } else if (current.length < 80 && !current.includes(text)) {
+        input.value = `${current} ${text}`;
+      } else {
+        showToast("暂时没想到合适的，可以稍后再试");
+        return false;
+      }
+      autosize();
+      input.focus();
+      return true;
+    }
+
+    quickIdea.addEventListener("click", () => {
+      smartFill(suggestionSets[setIndex][0]);
+      strip.classList.add("has-idea");
+      phone.classList.remove("panel-open");
+    });
+
+    openMore.addEventListener("click", () => {
+      phone.classList.add("panel-open");
+      renderSuggestions();
+    });
+
+    refreshBtn.addEventListener("click", () => {
+      if (remaining <= 0) {
+        showToast("剩余次数不足");
+        return;
+      }
+      remaining -= 1;
+      setIndex = (setIndex + 1) % suggestionSets.length;
+      remainCount.textContent = remaining;
+      renderSuggestions();
+    });
+
+    suggestionsEl.addEventListener("click", (event) => {
+      const button = event.target.closest(".suggest-action");
+      if (!button) return;
+      const index = Number(button.dataset.index);
+      smartFill(suggestionSets[setIndex][index]);
+    });
+
+    sendBtn.addEventListener("click", () => {
+      const text = input.value.trim();
+      if (!text) return;
+      const row = document.createElement("div");
+      row.className = "bubble-row me";
+      row.innerHTML = `<div class="bubble"></div>`;
+      row.querySelector(".bubble").textContent = text;
+      messages.appendChild(row);
+      input.value = "";
+      autosize();
+      phone.classList.remove("panel-open");
+      sentFlash.classList.add("show");
+      setTimeout(() => sentFlash.classList.remove("show"), 1400);
+    });
+
+    input.addEventListener("input", autosize);
+    renderSuggestions();
+    autosize();
+  </script>
+</body>
+</html>
